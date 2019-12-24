@@ -33,6 +33,9 @@
             "enabled": false
         }
     },
+    "require": {
+        "smalot/pdfparser": "*"
+    },
     "repositories": [
         {
             "type": "composer",
