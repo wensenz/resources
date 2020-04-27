@@ -9,7 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log', 'queue'],
+    'bootstrap' => ['log'],
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -35,12 +35,6 @@ return [
             'hostname' => 'localhost',
             'port' => 6379,
             'database' => 0,
-        ],
-        'queue' => [
-            'class' => yii\queue\redis\Queue::class,
-//            'as log' => yii\queue\LogBehavior::class,
-            'redis' => 'redis', // 连接组件或它的配置
-            'channel' => 'queue-test', // Queue channel key
         ],
     ],
     'params' => $params,

@@ -9,6 +9,8 @@
 namespace console\controllers;
 
 use common\plugin\pdf\parser;
+use common\services\queue\runJob;
+use common\services\queue\runJober;
 use common\services\queue\userBehaviorJob;
 use common\services\queue\workerJob;
 use yii\console\Controller;
@@ -34,22 +36,44 @@ class TestController extends Controller
 //            'channel' => 'queue-worker', // Queue channel key
 //        ]]);
 
-        \Yii::$app->queue->push(new userBehaviorJob([
-            'id' => '83',
+//        \Yii::$app->queue->push(new userBehaviorJob([
+//            'id' => '83',
+//            'action' => 'reg',
+//        ]));
+
+        $userWok = new userBehaviorJob([
+            'id' => '23',
             'action' => 'reg',
-        ]));
+        ]);
+        $userWok->push();
 
         // 延时加入队列
-        \Yii::$app->queue->delay(10)->push(new userBehaviorJob([
-            'id' => '21',
-            'action' => 'sdgsdgsdf',
-        ]));
-
+        $worker = new runJob([
+            'id' => '23',
+            'name' => '侧翻cvcv3bfs',
+        ]);
+        $userWok->push(3);
 
     }
 
     public function actionRun()
     {
-        echo 'hello run';
+        $runJob = new runJob();
+        $runJob->run();
+    }
+
+    public function actionListen()
+    {
+//        $runJob = new runJob();
+//        $runJob->listen();
+
+        $userJob = new userBehaviorJob();
+        $userJob->listen();
+    }
+
+    public function actionInfo()
+    {
+        $runJob = new runJob();
+        $runJob->info();
     }
 }
