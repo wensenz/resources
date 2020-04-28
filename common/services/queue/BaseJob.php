@@ -7,6 +7,7 @@ namespace common\services\queue;
 use yii\base\BaseObject;
 use yii\console\Exception;
 use yii\queue\JobInterface;
+use yii\queue\redis\Command;
 use yii\queue\redis\Queue;
 
 abstract class BaseJob extends BaseObject implements JobInterface
@@ -16,6 +17,7 @@ abstract class BaseJob extends BaseObject implements JobInterface
 
     // 重试间隔
     public $retryInterval = 1200;
+
 
     protected $queueName;
     protected $queueObjectName;
@@ -69,8 +71,12 @@ abstract class BaseJob extends BaseObject implements JobInterface
         $queue->run(true, $timeout);
     }
 
-    public function info()
+    /**
+     * 消费队列的时候会使用到这个类
+     * @return Queue
+     */
+    public function getQueue()
     {
-        $queue = new Queue(['channel' => $this->queueName]);
+        return new Queue(['channel' => $this->queueName]);
     }
 }

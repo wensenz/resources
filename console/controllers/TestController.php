@@ -52,28 +52,7 @@ class TestController extends Controller
             'id' => '23',
             'name' => '侧翻cvcv3bfs',
         ]);
-        $userWok->push(3);
+        $worker->push(3);
 
-    }
-
-    public function actionRun()
-    {
-        $runJob = new runJob();
-        $runJob->run();
-    }
-
-    public function actionListen()
-    {
-//        $runJob = new runJob();
-//        $runJob->listen();
-
-        $userJob = new userBehaviorJob();
-        $userJob->listen();
-    }
-
-    public function actionInfo()
-    {
-        $runJob = new runJob();
-        $runJob->info();
     }
 }
