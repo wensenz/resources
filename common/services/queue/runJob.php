@@ -3,7 +3,6 @@
 
 namespace common\services\queue;
 
-use yii\queue\redis\Queue;
 
 class runJob extends BaseJob
 {

@@ -7,16 +7,12 @@ namespace common\services\queue;
 use yii\base\BaseObject;
 use yii\console\Exception;
 use yii\queue\JobInterface;
-use yii\queue\redis\Command;
 use yii\queue\redis\Queue;
 
 abstract class BaseJob extends BaseObject implements JobInterface
 {
     // 重试次数
-    public $retryTime = 3;
-
-    // 重试间隔
-    public $retryInterval = 1200;
+    const RETRY_TIMES = 3;
 
 
     protected $queueName;
@@ -40,6 +36,8 @@ abstract class BaseJob extends BaseObject implements JobInterface
             'class' => Queue::class,
             'as log' => \yii\queue\LogBehavior::class,
             'redis' => 'redis', // 连接组件或它的配置
+            'ttr' => 300,                       // Max time for anything job handling
+            'attempts' => self::RETRY_TIMES,    // Max number of attempts
             'channel' => $this->queueName,
         ]]);
     }
@@ -57,18 +55,6 @@ abstract class BaseJob extends BaseObject implements JobInterface
     public function push($delay = 0)
     {
         \Yii::$app->{$this->queueObjectName}->delay($delay)->push($this);
-    }
-
-    public function run()
-    {
-        $queue = new Queue(['channel' => $this->queueName]);
-        $queue->run(false);
-    }
-
-    public function listen($timeout = 3)
-    {
-        $queue = new Queue(['channel' => $this->queueName]);
-        $queue->run(true, $timeout);
     }
 
     /**
