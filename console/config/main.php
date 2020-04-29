@@ -23,6 +23,7 @@ return [
     ],
     'components' => [
         'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
@@ -33,7 +34,8 @@ return [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['info'],
-                    'logFile' => '@runtime/logs/info/app.log',
+                    'logFile' => '@runtime/logs/info/'.date('Ymd').'/app.log',
+                    'logVars' => ['*']
                 ],
             ],
         ],

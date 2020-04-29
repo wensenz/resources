@@ -35,4 +35,9 @@ class runJob extends BaseJob
     {
         $this->queueObjectName = self::QUEUE_OBJECT_NAME;
     }
+
+    public function setRunningTime()
+    {
+        // 不设置默认1分钟
+    }
 }

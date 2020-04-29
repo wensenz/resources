@@ -15,9 +15,10 @@ abstract class BaseJob extends BaseObject implements RetryableJobInterface
     // 重试次数
     const RETRY_TIMES = 3;
 
-    protected $queueName;
-    protected $queueObjectName;
-    protected $redisDatabase = 0;       // 可以做redis数据扩展
+    protected $queueName;               // 队列名称
+    protected $queueObjectName;         // 队列对象名称
+    protected $redisDatabase = 0;       // 可以做redis数据扩展 未实现
+    protected $runningTime = 59;             // listen运行时间
 
     public function __construct($config = [])
     {
@@ -29,11 +30,12 @@ abstract class BaseJob extends BaseObject implements RetryableJobInterface
     {
         $this->setQueueObjName();
         $this->setQueueName();
+        $this->setRunningTime();
         if (!$this->queueName || !$this->queueObjectName) {
             throw new Exception('must have queue-object && queue-name');
         }
         \Yii::$app->setComponents([$this->queueObjectName => [
-            'class' => Queue::class,
+            'class' => RewriteQueue::class,
             'as log' => \yii\queue\LogBehavior::class,
             'redis' => 'redis', // 连接组件或它的配置
             'channel' => $this->queueName,
@@ -50,9 +52,22 @@ abstract class BaseJob extends BaseObject implements RetryableJobInterface
 
     abstract public function setQueueObjName();
 
+    abstract public function setRunningTime();
+
     public function push($delay = 0)
     {
         \Yii::$app->{$this->queueObjectName}->delay($delay)->push($this);
+    }
+
+    public function getTtr()
+    {
+        // 重试间隔
+        return 300;
+    }
+
+    public function canRetry($attempt, $error)
+    {
+        return ($attempt < self::RETRY_TIMES) && ($error instanceof TemporaryException);
     }
 
     /**
@@ -61,22 +76,19 @@ abstract class BaseJob extends BaseObject implements RetryableJobInterface
      */
     public function getQueue()
     {
-        return new Queue(['channel' => $this->queueName]);
+        return new RewriteQueue(['channel' => $this->queueName, 'runningTime' => $this->runningTime]);
     }
 
-    public function testRun($repeat, $timeout = 1)
+    /**
+     * 用来调试的DEMO
+     * @param $repeat
+     * @param int $timeout
+     */
+    public function testRun($repeat, $timeout = 3)
     {
-        $queue =  new Queue(['channel' => $this->queueName]);
+        $queue = new RewriteQueue(['channel' => $this->queueName]);
         $queue->run($repeat, $timeout);
     }
 
-    public function getTtr()
-    {
-        return 15 * 60;
-    }
 
-    public function canRetry($attempt, $error)
-    {
-        return ($attempt < self::RETRY_TIMES) && ($error instanceof TemporaryException);
-    }
 }

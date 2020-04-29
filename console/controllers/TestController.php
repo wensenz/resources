@@ -43,16 +43,16 @@ class TestController extends Controller
 
         $userWok = new userBehaviorJob([
             'id' => '23',
-            'action' => 'reg',
+            'action' => 'login',
         ]);
         $userWok->push();
 
         // 延时加入队列
-        $worker = new runJob([
-            'id' => '23',
-            'name' => '侧翻cvcv3bfs',
-        ]);
-        $worker->push(3);
+//        $worker = new runJob([
+//            'id' => '23',
+//            'name' => 'fgbfgdfgwcvcv3bfs',
+//        ]);
+//        $worker->push(60);
 
     }
 
@@ -60,6 +60,5 @@ class TestController extends Controller
     {
         $userWok = new userBehaviorJob();
         $userWok->testRun(false);
-
     }
 }
