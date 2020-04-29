@@ -8,8 +8,9 @@ use yii\base\BaseObject;
 use yii\console\Exception;
 use yii\queue\JobInterface;
 use yii\queue\redis\Queue;
+use yii\queue\RetryableJobInterface;
 
-abstract class BaseJob extends BaseObject implements JobInterface
+abstract class BaseJob extends BaseObject implements RetryableJobInterface
 {
     // 重试次数
     const RETRY_TIMES = 3;
@@ -36,8 +37,6 @@ abstract class BaseJob extends BaseObject implements JobInterface
             'class' => Queue::class,
             'as log' => \yii\queue\LogBehavior::class,
             'redis' => 'redis', // 连接组件或它的配置
-            'ttr' => 300,                       // Max time for anything job handling
-            'attempts' => self::RETRY_TIMES,    // Max number of attempts
             'channel' => $this->queueName,
         ]]);
     }
@@ -64,5 +63,21 @@ abstract class BaseJob extends BaseObject implements JobInterface
     public function getQueue()
     {
         return new Queue(['channel' => $this->queueName]);
+    }
+
+    public function testRun($repeat, $timeout = 1)
+    {
+        $queue =  new Queue(['channel' => $this->queueName]);
+        $queue->run($repeat, $timeout);
+    }
+
+    public function getTtr()
+    {
+        return 15 * 60;
+    }
+
+    public function canRetry($attempt, $error)
+    {
+        return ($attempt < self::RETRY_TIMES) && ($error instanceof \yii\base\Exception);
     }
 }

@@ -5,7 +5,6 @@ namespace common\services\queue;
 
 
 use yii\base\Exception;
-use yii\queue\ExecEvent;
 
 class userBehaviorJob extends BaseJob
 {
@@ -23,6 +22,8 @@ class userBehaviorJob extends BaseJob
     {
         var_dump($this->id, $this->action);
         \Yii::info("exec {$this->id} , {$this->action} info");
+
+//        throw new Exception('抛出异常用于重试'); // 此处可以创建独立的异常类来处理
         return false;
     }
 

@@ -55,4 +55,11 @@ class TestController extends Controller
         $worker->push(3);
 
     }
+
+    public function actionRun()
+    {
+        $userWok = new userBehaviorJob();
+        $userWok->testRun(false);
+
+    }
 }

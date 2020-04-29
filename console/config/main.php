@@ -34,15 +34,6 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['info'],
                     'logFile' => '@runtime/logs/info/app.log',
-                    'categories' => ['application']
-                ],
-            ],
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['info'],
-                    'logFile' => '@runtime/logs/info/queue.log',
-                    'categories' => ['yii\queue\Queue']
                 ],
             ],
         ],
