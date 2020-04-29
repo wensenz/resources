@@ -4,9 +4,9 @@
 namespace common\services\queue;
 
 
+use common\services\exception\TemporaryException;
 use yii\base\BaseObject;
 use yii\console\Exception;
-use yii\queue\JobInterface;
 use yii\queue\redis\Queue;
 use yii\queue\RetryableJobInterface;
 
@@ -14,7 +14,6 @@ abstract class BaseJob extends BaseObject implements RetryableJobInterface
 {
     // 重试次数
     const RETRY_TIMES = 3;
-
 
     protected $queueName;
     protected $queueObjectName;
@@ -78,6 +77,6 @@ abstract class BaseJob extends BaseObject implements RetryableJobInterface
 
     public function canRetry($attempt, $error)
     {
-        return ($attempt < self::RETRY_TIMES) && ($error instanceof \yii\base\Exception);
+        return ($attempt < self::RETRY_TIMES) && ($error instanceof TemporaryException);
     }
 }

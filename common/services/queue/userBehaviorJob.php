@@ -4,7 +4,7 @@
 namespace common\services\queue;
 
 
-use yii\base\Exception;
+use common\services\exception\TemporaryException;
 
 class userBehaviorJob extends BaseJob
 {
@@ -23,7 +23,7 @@ class userBehaviorJob extends BaseJob
         var_dump($this->id, $this->action);
         \Yii::info("exec {$this->id} , {$this->action} info");
 
-//        throw new Exception('抛出异常用于重试'); // 此处可以创建独立的异常类来处理
+        throw new TemporaryException('抛出异常用于重试'); // 此处可以创建独立的异常类来处理
         return false;
     }
 
